@@ -1,4 +1,7 @@
+from player import HumanPlayer, RandomComputerPlayer
 import tkinter as tk
+import time
+
 
 class TicTacToe:
     def __init__(self):
@@ -14,8 +17,8 @@ class TicTacToe:
     @staticmethod
     def print_board_nums():
         # 0 | 1 | 2 etc (tells us what number corresponds to what box)
-        number_board = (str(i) for i in range(j*3, (j+1)*3) for j in range(3))
-        for row in [number_board[i*3: (i+1)*3] for i in range(3)]:
+        number_board = [[str(i) for i in range(j*3, (j+1)*3)] for j in range(3)]
+        for row in number_board:
             print('| ' + ' | '.join(row) + ' |')
 
     def available_moves(self):
@@ -48,7 +51,35 @@ class TicTacToe:
             return True
         return False
 
+    # Winner if 3 in a row anywhere (we have to check all of these)
+    def winner(self, square, letter):
+        # Check the row in the square
+        row_ind = square // 3 # 0, 1, 2
+        row = self.board[row_ind*3 : (row_ind + 1)*3] # [0, 1, 2], [3, 4, 5], [6, 7, 8]
+        if all([spot == letter for spot in row]): # if all the spots are the same letter
+            return True
+
+        # Check the column index
+        col_ind = square % 3 # 0, 1, 2
+        column = [self.board[col_ind+i*3] for i in range(3)] # [0, 3, 6], [1, 4, 7], [2, 5, 8]
+        if all([spot == letter for spot in column]):
+            return True
+
+        # Check diagonals
+        # But only if the square is an even number (0, 2, 4, 6, 8) 
+        # These are the only moves possible to win a diagonal in a 3x3 board (0, 4, 8) or (2, 4, 6)
+        if square % 2 == 0:
+            diagonal1 = [self.board[i] for i in [0, 4, 8]] # top left to bottom right diagonal
+            diagonal2 = [self.board[i] for i in [2, 4, 6]] # top right to bottom left diagonal
+
+            if all([spot == letter for spot in diagonal1]) or all([spot == letter for spot in diagonal2]):
+                return True
+
+        # If all of these fail (no 3 in a row)
+        return False
+
 def play(game, x_player, o_player, print_game=True):
+    # Returns the winner of the game (the letter) or None for a tie
     if print_game:
         game.print_board_nums()
 
@@ -70,6 +101,11 @@ def play(game, x_player, o_player, print_game=True):
                 game.print_board()
                 print('')
 
+            if game.current_winner:
+                if print_game:
+                    print(letter + ' wins!')
+                return letter # Ends the loop and exits the game
+
             # After we made our move, we need to alternate letters
             letter = 'O' if letter == 'X' else 'X' # switches player
             
@@ -78,3 +114,15 @@ def play(game, x_player, o_player, print_game=True):
             #     letter = 'O'
             # else:
             #     letter = 'X'
+
+        # Tiny break to make things a little easier to read
+        time.sleep(0.8)
+
+    if print_game:
+        print('It\'s a tie!')
+
+if __name__ == '__main__':
+    x_player = HumanPlayer('X')
+    o_player = RandomComputerPlayer('O')
+    t_game = TicTacToe()
+    play(t_game, x_player, o_player, print_game=True)
