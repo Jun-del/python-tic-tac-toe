@@ -2,17 +2,17 @@ from player import HumanPlayer, RandomComputerPlayer
 import tkinter as tk
 import time
 
-
 class TicTacToe:
     def __init__(self):
         # 2D list of strings representing the board
         self.board = [' ' for _ in range(9)]
         # Keep track of winner
         self.current_winner = None
-        
+
     def print_board(self):
-        for row in [self.board[i*3: (i+1)*3] for i in range(3)]:
-            print('| ' + ' | '.join(row) + ' |')
+        for row in [self.board[i*3: (i+1)*3] for i in range(3)]: # [0, 1, 2], [3, 4, 5], [6, 7, 8]
+            print('| ' + ' | '.join(row) + ' |') 
+            print('|———' + '|' + '———' + '|' + '———|') 
 
     @staticmethod
     def print_board_nums():
@@ -20,10 +20,11 @@ class TicTacToe:
         number_board = [[str(i) for i in range(j*3, (j+1)*3)] for j in range(3)]
         for row in number_board:
             print('| ' + ' | '.join(row) + ' |')
+            if row < number_board[-1]:
+                print('|———' + '|' + '———' + '|' + '———|')
 
     def available_moves(self):
         return [i for i, spot in enumerate(self.board) if spot == ' ']
-
         # The above is the same as:
         # moves = []
         # for (i, spot) in enumerate(self.board):
@@ -111,7 +112,6 @@ def play(game, x_player, o_player, print_game=True):
 
             # After we made our move, we need to alternate letters
             letter = 'O' if letter == 'X' else 'X' # switches player
-            
             # The above is the same as:
             # if letter == 'X':
             #     letter = 'O'
