@@ -84,7 +84,7 @@ def play(game, x_player, o_player, print_game=True):
     if print_game:
         game.print_board_nums()
 
-    print("Press 'q' to quit the game.")
+    print("\nPress 'q' to quit the game.")
 
     letter = 'X' # starting letter
 
@@ -101,7 +101,7 @@ def play(game, x_player, o_player, print_game=True):
         # Let's define a function to make a move!
         if game.make_move(square, letter):
             if print_game:
-                print(letter + f' makes a move to square {square}')
+                print('\n' + letter + f' makes a move to square {square}')
                 game.print_board()
                 print('')
 
@@ -126,6 +126,20 @@ def play(game, x_player, o_player, print_game=True):
 
 if __name__ == '__main__':
     x_player = HumanPlayer('X')
-    o_player = RandomComputerPlayer('O')
     t_game = TicTacToe()
+
+    # Prompt the user to play against random computer or AI computer
+    while True:
+        print('Play game against random computer or AI computer?')
+        game_type = input('Type 1 for random computer or 2 for AI computer: ')
+        print('\n')
+        if game_type == '1':
+            o_player = RandomComputerPlayer('O')
+            break
+        elif game_type == '2':
+            o_player = ComputerPlayer('O')
+            break
+        else:
+            print('Invalid input. Please try again.')
+
     play(t_game, x_player, o_player, print_game=True)
