@@ -29,10 +29,14 @@ class HumanPlayer(Player):
             square = input(self.letter + '\'s turn. Input move (0-8): ')
 
             try:
+                if square == 'q':
+                    exit()
+
                 val = int(square)
                 if val not in game.available_moves():
                     raise ValueError
                 valid_square = True # if the square is valid, then we can break out of the loop
+                
             except ValueError:
                 print('Invalid square. Try again.')
 

@@ -83,7 +83,10 @@ def play(game, x_player, o_player, print_game=True):
     if print_game:
         game.print_board_nums()
 
+    print("Press 'q' to quit the game.")
+
     letter = 'X' # starting letter
+
     # Iterate while the game still has available moves
     # (we don't have to worry about winner because we'll just return that
     # which breaks the loop)
