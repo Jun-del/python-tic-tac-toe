@@ -51,10 +51,10 @@ class ComputerPlayer(Player):
             square = random.choice(game.available_moves()) # Randomly choose one
         else:
             # Get the square based off the minimax algorithm
-            square = self.minmax(game, self.letter)['position']
+            square = self.minimax(game, self.letter)['position']
         return square
 
-    def minmax(self, state, player):
+    def minimax(self, state, player):
         max_player = self.letter # Yourself (the maximizer)
         other_player = 'O' if player == 'X' else 'X' # The other player
 
@@ -81,7 +81,7 @@ class ComputerPlayer(Player):
             state.make_move(possible_move, player)
 
             # Step 2: Recursively simulate a game after making that move
-            sim_score = self.minmax(state, other_player) # Alternate players 
+            sim_score = self.minimax(state, other_player) # Alternate players 
 
             # Step 3: Undo the move
             state.board[possible_move] = ' ' # Reset the board to empty
