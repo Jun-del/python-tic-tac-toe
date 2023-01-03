@@ -59,6 +59,26 @@ class TicTacToeGame:
         no_winner = not self._has_winner
         return move_was_not_played and no_winner
 
+    # Process the current move and check if it is a winning move
+    def process_move(self, move): # Input = move
+        row, col = move.row, move.column
+        self._current_moves[row][col] = move
+        for combo in self._winning_combos: # Loop through the winning combinations
+            results = set(
+                self._current_moves[n][m].label
+                for n, m in combo
+            ) # Create a set of the labels of the moves in the winning combination, result is a set of labels
+            # e.g., All the labels in the moves associated with the cells of the current winning combination hold an X. 
+            # In that case, the generator expression will yield three X labels
+            is_win = (len(results) == 1) and ("" not in results)
+            if is_win: # If the set has only one label and it is not an empty string, then we have a winner
+                self._has_winner = True
+                self.winner_combo = combo
+                break
+    
+    def has_winner(self):
+        return self._has_winner # Return True if there is a winner, False otherwise
+
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
     def __init__(self): # Constructor
