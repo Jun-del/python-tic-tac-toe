@@ -79,19 +79,24 @@ class TicTacToeGame:
     def has_winner(self):
         return self._has_winner # Return True if there is a winner, False otherwise
 
+    # Check if the game is tied (no winner and all possible moves have been played)
     def is_tied(self):
         no_winner = not self._has_winner
         played_moves = (
             move.label for row in self._current_moves for move in row
-        )
-        return no_winner and all(played_moves) # Return True if there is no winner and all the moves have been played, False otherwise
+        ) # Check all the moves in ._current_moves have a label different from the empty string
+        return no_winner and all(played_moves)
+
+    def toggle_player(self):
+        self.current_player = next(self._players) # Call next() on the iterator to get and return the next player
 
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
-    def __init__(self): # Constructor
+    def __init__(self, game): # Constructor
         super().__init__() # Call the constructor of the parent class (tkinter.TK)
         self.title("Tic-Tac-Toe") # Set the title of the window
         self._cells = {} # Dictionary of or cells (row, column) -> button
+        self._game = game
         self.create_board_display() # Create the display label
         self.create_board_grid() # Create the grid of cells
 
@@ -108,10 +113,10 @@ class TicTacToeBoard(tk.Tk):
     def create_board_grid(self):
         grid_frame = tk.Frame(master = self) # Create a frame to hold the game's grif of cells/buttons
         grid_frame.pack() # Place the frame into the window
-        for row in range(3):
+        for row in range(self._game.board_size):
             self.rowconfigure(row, weight = 1, minsize = 50)
             self.columnconfigure(row, weight = 1, minsize = 75)
-            for column in range(3):
+            for column in range(self._game.board_size):
                 button = tk.Button(
                     master = grid_frame,
                     text = "",
@@ -129,6 +134,25 @@ class TicTacToeBoard(tk.Tk):
                     pady = 5,
                     sticky = "nsew" # The sticky parameter tells the button to expand to fill the entire cell
                 ) # Place the button into the grid
+    
+    def play(self, event):
+        clicked_button = event.widget # Get the button that was clicked
+        row, col = self._cells[clicked_button] # Get the row and column of the clicked button
+        move = Move(row, col, self._game.current_player.label) # Create a move object
+        if self._game.is_valid_move(move): # Check if the move is valid, then the if code block runs
+            self._update_button(clicked_button) # Update the click button
+            self._game.process_move(move) # Process the move using the current move
+            if self._game.is_tied(): # Check if the game is tied
+                self._update_display(msg = "It's a tie!", color = "red")
+            elif self._game.has_winner(): # Check if there is a winner
+                self._highlight_cells()
+                msg = f'Player "{self._game.current_player.label}" won!'
+                color = self._game.current_player.color
+                self._update_display(msg, color)
+            else: # If there is no winner and the game is not tied, then toggle the player (switch turns)
+                self._game.toggle_player()
+                msg = f"{self._game.current_player.label}'s turn"
+                self._update_display(msg)
 
 def main():
     # Create a new game board window and run its event loop
