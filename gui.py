@@ -3,6 +3,35 @@
 # Importing modules
 import tkinter as tk
 from tkinter import font
+from itertools import cycle
+from typing import NamedTuple # NamedTuple is a class that allows us to create a class with named attributes
+
+class Player(NamedTuple):
+    label: str
+    letter: str
+
+class Move(NamedTuple):
+    row: int
+    column: int
+    label: str = ""
+
+BOARD_SIZE = 3 # The size of the board (3x3, 4x4, etc.)
+DEFAULT_PLAYERS = (
+    Player(label="X", color="blue"),
+    Player(label="O", color="green"),
+) # Represents the players in the game
+
+class TicTacToeGame:
+    def __init__(self, player = DEFAULT_PLAYERS, board_size = BOARD_SIZE):
+        self._players = cycle(player) # A cyclical iterator over the input tuple of players (X, O)
+        self.board_size = board_size
+        self.current_player = next(self.player) # The current player
+        self.winner_combo = [] # The winning combination of moves
+        self._current_moves = [] # The list of players’ moves in a given game
+        self._has_winner = False # Boolean to indicate if there is a winner
+        self._winning_combos = [] # The list of winning combinations
+        self._setup_board()
+
 
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
