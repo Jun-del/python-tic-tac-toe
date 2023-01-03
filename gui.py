@@ -79,6 +79,13 @@ class TicTacToeGame:
     def has_winner(self):
         return self._has_winner # Return True if there is a winner, False otherwise
 
+    def is_tied(self):
+        no_winner = not self._has_winner
+        played_moves = (
+            move.label for row in self._current_moves for move in row
+        )
+        return no_winner and all(played_moves) # Return True if there is no winner and all the moves have been played, False otherwise
+
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
     def __init__(self): # Constructor
