@@ -2,13 +2,13 @@
 
 # Importing modules
 import tkinter as tk
-from tkinter import font
 from itertools import cycle
+from tkinter import font
 from typing import NamedTuple # NamedTuple is a class that allows us to create a class with named attributes
 
 class Player(NamedTuple):
     label: str
-    letter: str
+    color: str
 
 class Move(NamedTuple):
     row: int
@@ -25,7 +25,7 @@ class TicTacToeGame:
     def __init__(self, player = DEFAULT_PLAYERS, board_size = BOARD_SIZE):
         self._players = cycle(player) # A cyclical iterator over the input tuple of players (X, O)
         self.board_size = board_size
-        self.current_player = next(self.player) # The current player
+        self.current_player = next(self._players) # The current player
         self.winner_combo = [] # The winning combination of moves
         self._current_moves = [] # The list of players’ moves in a given game
         self._has_winner = False # Boolean to indicate if there is a winner
@@ -90,6 +90,13 @@ class TicTacToeGame:
     def toggle_player(self):
         self.current_player = next(self._players) # Call next() on the iterator to get and return the next player
 
+    def reset_game(self):
+        for row, row_content in enumerate(self._current_moves):
+            for col, _ in enumerate(row_content):
+                row_content[col] = Move(row, col) # Reset the moves
+            self._has_winner = False # Reset the winner
+            self.winner_combo = [] # Reset the winning combination
+
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
     def __init__(self, game): # Constructor
@@ -97,8 +104,21 @@ class TicTacToeBoard(tk.Tk):
         self.title("Tic-Tac-Toe") # Set the title of the window
         self._cells = {} # Dictionary of or cells (row, column) -> button
         self._game = game
+        self._create_menu() # Create the menu
         self.create_board_display() # Create the display label
         self.create_board_grid() # Create the grid of cells
+
+    def _create_menu(self):
+        menu_bar = tk.Menu(master = self)
+        self.config(menu = menu_bar)
+        file_menu = tk.Menu(master = menu_bar)
+        file_menu.add_command(
+            label = "New Game",
+            command = self.reset_board
+        )
+        file_menu.add_separator()
+        file_menu.add_command(label = "Exit", command = quit)
+        menu_bar.add_cascade(label = "Option", menu = file_menu)
 
     def create_board_display(self):
         display_frame = tk.Frame(master = self) # Create a frame to hold the board
@@ -171,9 +191,18 @@ class TicTacToeBoard(tk.Tk):
             if coordinates in self._game.winner_combo:
                 button.config(highlightbackground="red")
 
+    def reset_board(self):
+        self._game.reset_game() # Reset the game
+        self._update_display(msg="Ready?")
+        for button in self._cells.keys(): # Iterate through the dictionary of cells and reset the buttons
+            button.config(highlightbackground="lightblue")
+            button.config(text="")
+            button.config(fg="black")
+
 def main():
     # Create a new game board window and run its event loop
-    board = TicTacToeBoard()
+    game = TicTacToeGame()
+    board = TicTacToeBoard(game)
     board.mainloop()
 
 if __name__ == "__main__":
