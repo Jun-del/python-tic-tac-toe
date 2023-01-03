@@ -51,6 +51,14 @@ class TicTacToeGame:
         second_diagonal = [ column[j] for j, column in enumerate(columns) ] # Second diagonal
         return rows + columns + [first_diagonal, second_diagonal]  # Return the winning combinations
 
+    # Validate player's move
+    def is_valid_move(self, move):
+        # Return True if the move is valid, False otherwise
+        row, col = move.row, move.column
+        move_was_not_played = self._current_moves[row][col].label == ""
+        no_winner = not self._has_winner
+        return move_was_not_played and no_winner
+
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
     def __init__(self): # Constructor
