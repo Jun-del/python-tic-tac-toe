@@ -127,6 +127,8 @@ class TicTacToeBoard(tk.Tk):
                     highlightbackground = "lightblue"
                 ) # Create a button for every cell in the grid
                 self._cells[button] = (row, column) # Add the button to the dictionary of cells
+                button.bind("<ButtonPress-1>", self.play) # Bind the button to the play method
+                # Whenever a player clicks a given button, the method will run to process the move and update the game state
                 button.grid(
                     row = row,
                     column = column,
@@ -153,6 +155,21 @@ class TicTacToeBoard(tk.Tk):
                 self._game.toggle_player()
                 msg = f"{self._game.current_player.label}'s turn"
                 self._update_display(msg)
+
+    # Update the display label with the given message and color to the current player label and color
+    def _update_button(self, clicked_button):
+        clicked_button.config(text = self._game.current_player.label)
+        clicked_button.config(fg = self._game.current_player.color)
+
+    def _update_display(self, msg, color = "black"):
+        self.display["text"] = msg
+        self.display["fg"] = color
+
+    # Highlight the cells of the winning combination
+    def _highlight_cells(self):
+        for button, coordinates in self._cells.items():
+            if coordinates in self._game.winner_combo:
+                button.config(highlightbackground="red")
 
 def main():
     # Create a new game board window and run its event loop
