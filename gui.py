@@ -1,18 +1,14 @@
+# Tic-Tac-Toe game with GUI
+
+# Importing modules
 import tkinter as tk
+from tkinter import font
 
-class Game:
-    def __init__(self):
-        # Create a window
-        self.window = tk.Tk()
-        # Set the title of the window as Tic Tac Toe
-        self.window.title("Tic Tac Toe")
-        # Set the size of the window
-        self.window.geometry("400x400")
-        # Disable the ability to resize the window
-        self.window.resizable(0, 0)
-        # Set the background color of the window
-        self.window.configure(bg="white")
-        # Start the window
-        self.window.mainloop()
+# Inherit from tkinter.TK, which is the main window that represents the game board
+class TicTacToeBoard(tk.TK):
+    def __init__(self): # Constructor
+        super().__init__() # Call the constructor of the parent class (tkinter.TK)
+        self.title("Tic-Tac-Toe") # Set the title of the window
+        self._cells = {} # Dictionary of or cells (row, column) -> button
 
-        
+   
