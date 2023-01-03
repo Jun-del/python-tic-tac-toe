@@ -32,6 +32,24 @@ class TicTacToeGame:
         self._winning_combos = [] # The list of winning combinations
         self._setup_board()
 
+    def _setup_board(self):
+        self._current_moves = [
+            [Move(row, column) for column in range(self.board_size)]
+            for row in range (self.board_size)
+        ] # Create a 2D list of moves (row, column) -> Move
+        self._winning_combos = self._get_winning_combos() # Assign the return value to the winning_combos
+
+    def _get_winning_combos(self):
+        # Input = current_moves attribute
+        rows = [
+            [ (move.row, move.column) for move in row ]
+            for row in self._current_moves
+        ]
+        columns = [ list(column) for column in zip(*rows) ]
+        # Winning combinations for rows and columns (rows, columns, and diagonals)
+        first_diagonal = [ row[i] for i, row in enumerate(rows) ] # First diagonal
+        second_diagonal = [ column[j] for j, column in enumerate(columns) ] # Second diagonal
+        return rows + columns + [first_diagonal, second_diagonal]  # Return the winning combinations
 
 # Inherit from tkinter.TK, which is the main window that represents the game board
 class TicTacToeBoard(tk.Tk):
